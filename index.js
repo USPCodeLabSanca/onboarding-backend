@@ -7,7 +7,7 @@ const app = express();
 
 app.use(cors());
 
-const JSONReceitas = require('./receitas.json');
+const JSONReceitas = require('./dict_recipes.json');
 
 // Associa requsições do tipo GET ao path '/' com a seguinte função.
 // Lembrando que `request` tem informações referentes à requisição, e
@@ -17,11 +17,10 @@ app.get(straux, (request, response) => {
     const ingredientes = request.query.ingredientes;
     if (ingredientes) {
         let ingredientesDisponiveis = ingredientes.split(',');
-
-        const todasASReceitas = Object.entries(JSONReceitas.receitas);
+        const todasASReceitas = Object.values(JSONReceitas);
         let possiveisReceitas = [];
         todasASReceitas.forEach(receitaAtual => {
-            ingredientesReceitaAtual = receitaAtual[1].ingredientes;
+            ingredientesReceitaAtual = receitaAtual.recipe;
 
             for (const ingrediente of ingredientesReceitaAtual) {
                 if (ingredientesDisponiveis.indexOf(ingrediente) === -1) {
@@ -30,13 +29,12 @@ app.get(straux, (request, response) => {
             }
 
             possiveisReceitas.push(receitaAtual);
-
         });
 
         response.send(JSON.stringify(possiveisReceitas));
 
     } else {
-        response.send(JSONReceitas); //retorna json contendo todas as receitas
+        response.send(Object.values(JSONReceitas)); //retorna json contendo todas as receitas
     }
 });
 
@@ -44,3 +42,6 @@ app.get(straux, (request, response) => {
 app.listen(8000, () => {
     console.log('Server running at port 8000!');
 });
+
+
+// cebola,ovo,leite,trigo,fuba,páprica,cominho,tomilho,pimenta,açafrão,sal,óleo
